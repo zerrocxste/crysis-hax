@@ -42,7 +42,7 @@ namespace memory_utils
     void write(std::vector<DWORD>address, T value)
     {
         size_t lengh_array = address.size() - 1;
-        static DWORD relative_address;
+        DWORD relative_address;
         relative_address = address[0];
         for (int i = 1; i < lengh_array + 1; i++)
         {
@@ -63,7 +63,7 @@ namespace memory_utils
     T read(std::vector<DWORD>address)
     {
         size_t lengh_array = address.size() - 1;
-        static DWORD relative_address;
+        DWORD relative_address;
         relative_address = address[0];
         for (int i = 1; i < lengh_array + 1; i++)
         {
@@ -113,11 +113,13 @@ namespace memory_utils
     {
         DWORD dwOldProtection;
 
-        VirtualProtect((LPVOID)(instruction_address), sizeof_instruction_byte, PAGE_EXECUTE_READWRITE, &dwOldProtection);
+        VirtualProtect((LPVOID)instruction_address, sizeof_instruction_byte, PAGE_EXECUTE_READWRITE, &dwOldProtection);
 
-        memcpy((LPVOID)instruction_address, instruction_bytes, sizeof_instruction_byte);
+        memcpy((LPVOID)instruction_address, instruction_bytes, sizeof_instruction_byte);    
 
-        VirtualProtect((LPVOID)(instruction_address), sizeof_instruction_byte, dwOldProtection, NULL);
+        VirtualProtect((LPVOID)instruction_address, sizeof_instruction_byte, dwOldProtection, NULL);
+
+        FlushInstructionCache(GetCurrentProcess(), (LPVOID)instruction_address, sizeof_instruction_byte);
     }
 }
 
